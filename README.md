@@ -90,7 +90,7 @@ Everything is in one file. The game logic, styling, touch handling, theme toggle
 
 ## How It Works
 
-The game logic is a direct port of [odia-game-adda's 2048 implementation](https://github.com/soumendrak/odia-game-adda), extracted from React/TypeScript into vanilla JavaScript. Core mechanics:
+Core mechanics:
 
 1. **Board**: 4x4 grid of tiles, represented as a 2D array
 2. **Moves**: Each direction slides all tiles and merges adjacent equal values
