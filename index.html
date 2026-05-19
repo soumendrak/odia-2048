@@ -25,7 +25,7 @@
   .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);padding:6px 8px;cursor:pointer;font-size:14px;color:var(--dim)}
   .board{background:var(--board-bg);border-radius:calc(var(--radius)+4px);padding:6px;position:relative;aspect-ratio:1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:var(--shadow)}
   .cell{background:var(--cell-bg);border-radius:var(--radius);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative}
-  .tile{position:absolute;width:calc(25% - 4.5px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);font-weight:700;transition:top 0.1s,left 0.1s;z-index:2;font-size:20px;user-select:none}
+  .tile{position:absolute;width:calc(25% - 4.5px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);font-weight:700;transition:top 0.1s,left 0.1s;z-index:2;font-size:clamp(12px,4.5vw,28px);user-select:none;transition:font-size 0.1s}
   @media(min-width:420px){.tile{width:calc(100px - 4.5px)}}
   .tile-2{background:var(--tile-2);color:#1a1a2e}
   .tile-4{background:var(--tile-4);color:#1a1a2e}
@@ -33,12 +33,12 @@
   .tile-16{background:var(--tile-16);color:var(--tile-txt-16)}
   .tile-32{background:var(--tile-32);color:var(--tile-txt-32)}
   .tile-64{background:var(--tile-64);color:var(--tile-txt-64)}
-  .tile-128{background:var(--tile-128);color:var(--tile-txt-128);font-size:18px}
-  .tile-256{background:var(--tile-256);color:var(--tile-txt-256);font-size:18px}
-  .tile-512{background:var(--tile-512);color:var(--tile-txt-512);font-size:18px}
-  .tile-1024{background:var(--tile-1024);color:var(--tile-txt-1024);font-size:16px}
-  .tile-2048{background:var(--tile-2048);color:var(--tile-txt-2048);font-size:16px}
-  .tile-super{background:var(--tile-super);color:var(--tile-txt-super);font-size:14px}
+  .tile-128{background:var(--tile-128);color:var(--tile-txt-128)}
+  .tile-256{background:var(--tile-256);color:var(--tile-txt-256)}
+  .tile-512{background:var(--tile-512);color:var(--tile-txt-512)}
+  .tile-1024{background:var(--tile-1024);color:var(--tile-txt-1024)}
+  .tile-2048{background:var(--tile-2048);color:var(--tile-txt-2048)}
+  .tile-super{background:var(--tile-super);color:var(--tile-txt-super)}
   @keyframes pop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
   @keyframes merge{0%{transform:scale(1)}30%{transform:scale(1.2)}100%{transform:scale(1)}}
   .tile-new{animation:pop 0.2s ease-out}
@@ -91,11 +91,11 @@ function hasMoves(b){for(let i=0;i<4;i++)for(let j=0;j<4;j++){if(!b[i][j])return
 function maxT(b){let m=0;for(let r of b)for(let v of r)if(v>m)m=v;return m}
 
 function r(){
-  let p=4;for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){let t=document.querySelector(`[data-r="${r}"][data-c="${c}"]`);if(t&&board[r][c]){t.textContent=oN(board[r][c]);t.className='tile tile-'+Math.min(board[r][c],4096);t.style.left=(c*25+1)+'%';t.style.top=(r*25+1)+'%';t.style.display='flex';t.dataset.v=board[r][c]}else if(t){t.style.display='none'}p++}
+  for(let r=0;r<SIZE;r++)for(let c=0;c<SIZE;c++){let t=document.querySelector(`[data-r="${r}"][data-c="${c}"]`);if(t&&board[r][c]){t.textContent=oN(board[r][c]);t.className='tile tile-'+Math.min(board[r][c],4096);t.style.fontSize=Math.max(12,28-String(board[r][c]).length*3)+'px';t.style.left=(c*25+1)+'%';t.style.top=(r*25+1)+'%';t.style.display='flex';t.dataset.v=board[r][c]}else if(t){t.style.display='none'}}
 }
 
 function addTile(r,c,v,anim){
-  let t=document.createElement('div');t.className='tile tile-'+Math.min(v,4096)+(anim==='new'?' tile-new':anim==='merge'?' tile-merge':'');t.textContent=oN(v);t.style.left=(c*25+1)+'%';t.style.top=(r*25+1)+'%';t.dataset.r=r;t.dataset.c=c;t.dataset.v=v;document.getElementById('board').appendChild(t);setTimeout(()=>t.classList.remove('tile-new','tile-merge'),200)
+  let t=document.createElement('div');t.className='tile tile-'+Math.min(v,4096)+(anim==='new'?' tile-new':anim==='merge'?' tile-merge':'');t.textContent=oN(v);t.style.left=(c*25+1)+'%';t.style.top=(r*25+1)+'%';let d=String(v).length;t.style.fontSize=Math.max(12,28-d*3)+'px';t.dataset.r=r;t.dataset.c=c;t.dataset.v=v;document.getElementById('board').appendChild(t);setTimeout(()=>t.classList.remove('tile-new','tile-merge'),200)
 }
 
 function uS(){
