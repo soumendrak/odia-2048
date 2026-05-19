@@ -10,8 +10,8 @@
   :root{--bg:#f8f6f2;--surface:#fefcf8;--fg:#1a1a2e;--dim:#7a7a8e;--soft:#b8b8c8;--border:#e8e4dc;--accent:#ff7a45;--score-bg:#e8e4dc;--tile-2:#f0ebe0;--tile-4:#ede0c8;--tile-8:#f2b179;--tile-16:#f59563;--tile-32:#f67c5f;--tile-64:#f65e3b;--tile-128:#edcf72;--tile-256:#edcc61;--tile-512:#edc850;--tile-1024:#edc53f;--tile-2048:#edc22e;--tile-super:#3c3a32;--tile-txt-2:#1a1a2e;--tile-txt-4:#1a1a2e;--tile-txt-8:#fff;--tile-txt-16:#fff;--tile-txt-32:#fff;--tile-txt-64:#fff;--tile-txt-128:#fff;--tile-txt-256:#fff;--tile-txt-512:#fff;--tile-txt-1024:#fff;--tile-txt-2048:#fff;--tile-txt-super:#fff;--cell-bg:#cdc1b4;--board-bg:#bbada0;--radius:8px;--shadow:0 2px 8px rgba(0,0,0,0.06)}
   html.dark{--bg:#0f0d18;--surface:#171425;--fg:#f0ecf7;--dim:#9590a8;--soft:#5b556b;--border:#231f33;--accent:#ff8a5a;--score-bg:#1e1a2e;--tile-2:#e8e0d0;--tile-4:#f0d8a0;--tile-8:#c87530;--tile-16:#d08040;--tile-32:#d87840;--tile-64:#e06030;--tile-128:#c8a030;--tile-256:#d0b028;--tile-512:#d8b820;--tile-1024:#e0c010;--tile-2048:#e8c800;--tile-super:#f0e8d0;--tile-txt-2:#1a1a2e;--tile-txt-4:#1a1a2e;--tile-txt-8:#fff;--tile-txt-16:#fff;--tile-txt-32:#fff;--tile-txt-64:#fff;--tile-txt-128:#fff;--tile-txt-256:#fff;--tile-txt-512:#fff;--tile-txt-1024:#fff;--tile-txt-2048:#fff;--tile-txt-super:#fff;--cell-bg:#3a3450;--board-bg:#1e1a2e;--shadow:0 2px 12px rgba(0,0,0,0.3)}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh}
-  body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+  html,body{background:var(--bg);color:var(--fg);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;overscroll-behavior:none}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;overscroll-behavior:none;touch-action:none}
   .container{width:100%;max-width:420px}
   header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
   h1{font-size:22px;font-weight:700;letter-spacing:-0.3px}
@@ -23,7 +23,7 @@
   header .btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.2s}
   header .btn:hover{opacity:0.85}
   .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius);padding:6px 8px;cursor:pointer;font-size:14px;color:var(--dim)}
-  .board{background:var(--board-bg);border-radius:calc(var(--radius)+4px);padding:6px;position:relative;aspect-ratio:1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:var(--shadow)}
+  .board{background:var(--board-bg);border-radius:calc(var(--radius)+4px);padding:6px;position:relative;aspect-ratio:1;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:var(--shadow);touch-action:none;-ms-touch-action:none}
   .cell{background:var(--cell-bg);border-radius:var(--radius);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative}
   .tile{position:absolute;width:calc(25% - 4.5px);aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);font-weight:700;transition:top 0.1s,left 0.1s;z-index:2;font-size:clamp(12px,4.5vw,28px);user-select:none;transition:font-size 0.1s}
   @media(min-width:420px){.tile{width:calc(100px - 4.5px)}}
@@ -142,13 +142,14 @@ function toggleTheme(){
 
 // Touch handling
 let tx=0,ty=0;
-document.addEventListener('touchstart',e=>{let t=e.touches[0];tx=t.clientX;ty=t.clientY});
-document.addEventListener('touchend',e=>{
+document.getElementById('board').addEventListener('touchstart',e=>{let t=e.touches[0];tx=t.clientX;ty=t.clientY;e.preventDefault()},{passive:false});
+document.getElementById('board').addEventListener('touchend',e=>{
+  e.preventDefault();
   let t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty,adx=Math.abs(dx),ady=Math.abs(dy);
   if(Math.max(adx,ady)<20)return;
   let d=adx>ady?(dx>0?'right':'left'):(dy>0?'down':'up');
   handleKey({key:'Arrow'+d.charAt(0).toUpperCase()+d.slice(1),preventDefault:()=>{}})
-});
+},{passive:false});
 
 // Init
 document.addEventListener('keydown',handleKey);
